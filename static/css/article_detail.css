@@ -1,0 +1,67 @@
+/*推荐和反对*/
+#div_digg {
+    float: right;
+    margin-bottom: 10px;
+    margin-right: 30px;
+    font-size: 12px;
+    width: 125px;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.diggit {
+    float: left;
+    width: 46px;
+    height: 52px;
+    background: url("/static/img/upup.gif") no-repeat;
+    text-align: center;
+    cursor: pointer;
+    margin-top: 2px;
+    padding-top: 5px;
+}
+
+.buryit {
+    float: right;
+    margin-left: 20px;
+    width: 46px;
+    height: 52px;
+    background: url("/static/img/downdown.gif") no-repeat;
+    text-align: center;
+    cursor: pointer;
+    margin-top: 2px;
+    padding-top: 5px;
+}
+.clear {
+    clear: both;
+}
+
+#digg_tips{
+    color: red;
+}
+
+/*评论*/
+ input.author{
+    background-image: url("/static/img/icon_form.gif");
+    background-repeat: no-repeat;
+    border: 1px solid #ccc;
+    padding: 4px 4px 4px 30px;
+    width: 300px;
+    font-size: 13px;
+}
+
+input.author {
+    background-position: 3px -3px;
+}
+
+#comment_form_container {
+    border: 1px solid #dedede;
+    padding: 20px;
+    background-color: #fff;
+}
+.login_tips {
+    background-image: url("/static/img/icon_addcomment.gif");
+    background-repeat: no-repeat;
+    margin-top: 10px;
+    padding: 0 0 10px 25px;
+    font-weight: bold;
+}

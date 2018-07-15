@@ -1,0 +1,112 @@
+{% extends 'backend/base.html' %}
+
+{% block content %}
+
+    <form action="" method="post">
+        {% csrf_token %}
+        <div class="add_article">
+            <div class="alert-success text-center">添加文章</div>
+
+            <div class="add_article_region">
+                <div class="title form-group">
+                    <label for="">标题</label>
+                    <div>
+                        <input type="text" name="title" value="{{ article.title }}">
+                    </div>
+                </div>
+
+                <div class="content form-group">
+                    <label for="">内容(Kindeditor编辑器，不支持拖放/粘贴上传图片) </label>
+                    <div>
+                        <textarea name="content" id="article_content" cols="30"
+                                  rows="10">{{ article.content }}</textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="">创建时间</label>
+                    <input type="date" name="create_time" class="form-control"
+                           value="{{ article.create_time|date:"Y-m-d" }}">
+                </div>
+                <div class="form-group">
+                    <label for="">评论总数</label>
+                    <input type="text" name="comment_count" class="form-control" value="{{ article.comment_count }}">
+                </div>
+                <div class="form-group">
+                    <label for="">推荐总数</label>
+                    <input type="text" name="up_count" class="form-control" value="{{ article.up_count }}">
+                </div>
+                <div class="form-group">
+                    <label for="">反对总数</label>
+                    <input type="text" name="down_count" class="form-control" value="{{ article.down_count }}">
+                </div>
+
+                <h4>分类{{ article.category_id }}</h4>
+                <div class="form-group">
+
+                    <div class="radio">
+                        {% for cate in cate_list %}
+                            {% if cate.pk == article.category_id %}
+                                <label style="margin-left: 10px">
+                                    <input type="radio" name="cate" checked="checked"
+                                           value="{{ cate.pk }}">{{ cate.title }}
+                                </label>
+                            {% else %}
+                                <label style="margin-left: 10px">
+                                    <input type="radio" name="cate" value="{{ cate.pk }}">{{ cate.title }}
+                                </label>
+                            {% endif %}
+
+                        {% endfor %}
+                    </div>
+
+                </div>
+                <hr>
+                <h4>标签</h4>
+                <div class="checkbox">
+                    {% for tag in tags %}
+                        <label>
+                            {% if tag.pk in tag_list %}
+                                &nbsp;<input type="checkbox" name="tags" checked="checked" value="{{ tag.pk }}">
+                                {{ tag.title }}&nbsp;
+                            {% else %}
+                                &nbsp;<input type="checkbox" name="tags" value="{{ tag.pk }}">{{ tag.title }}
+                            {% endif %}&nbsp;
+
+                        </label>
+                    {% endfor %}
+                </div>
+                <hr>
+
+                <input type="submit" class="btn btn-default">
+
+            </div>
+
+        </div>
+    </form>
+    {% csrf_token %}
+    {#引入kindeditor编辑器#}
+    <script charset="utf-8" src="/static/kindeditor/kindeditor-all-min.js"></script>
+    <script charset="utf-8" src="/static/kindeditor/lang/zh-CN.js"></script>
+    <script>
+        KindEditor.ready(function (K) {
+            {#create里面的值是textarea标签的id值#}
+            window.editor = K.create('#article_content', {
+                {#固定宽高#}
+                width: '100%',
+                height: '600px',
+                {#禁止拖动#}
+                resizeType: 0,
+                {#上传文件请求地址#}
+                uploadJson: "/upload/",
+                {#添加别的参数csrfmiddlewaretoken#}
+                extraFileUploadParams: {
+                    csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val()
+                },
+                {#指定上传文件form名称#}
+                filePostName: "upload_img"
+            });
+        });
+
+    </script>
+
+{% endblock %}

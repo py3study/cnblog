@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon"/>
+    {#公共样式#}
+    <link rel="stylesheet" href="/static/css/theme/common.css">
+    {#个人站点主题样式#}
+    <link rel="stylesheet" href="/static/css/theme/{{ blog.theme }}">
+    {#bootstrap#}
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css">
+    <script src="/static/js/jquery.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.js"></script>
+    {#文章详情#}
+    <link rel="stylesheet" href="/static/css/article_detail.css">
+
+</head>
+<body>
+<div class="header">
+    <p class="title">{{ blog.title }}</p>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            {#加载自定义标签模块#}
+            {% load my_tags %}
+            {#调用get_query_data标签,它返回left_region.html,是已经被渲染过的文件#}
+            {% get_query_data username %}
+        </div>
+        <div class="col-md-9">
+
+            {% block content %}
+
+            {% endblock %}
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

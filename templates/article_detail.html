@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="article_info">
+        <h4 class="text-center">{{ article_obj.title }}</h4>
+        <div class="content">
+            {{ article_obj.content|safe }}
+        </div>
+        <div id="div_digg">
+            <div class="diggit action">
+                <span class="diggnum" id="digg_count">{{ article_obj.up_count }}</span>
+            </div>
+            <div class="buryit action">
+                <span class="burynum" id="bury_count">{{ article_obj.down_count }}</span>
+            </div>
+            <div class="clear"></div>
+            <div class="diggword" id="digg_tips">
+            </div>
+        </div>
+        <div class="clearfix"></div>
+
+        <div class="comment">
+            <p>评论列表</p>
+            <ul class="comment_list list-group">
+                {% for comment in comment_list %}
+                    <li class="list-group-item">
+                        <div>
+                            <a href="">#{{ forloop.counter }}楼</a>&nbsp;&nbsp;
+                            <span class="small">{{ comment.create_time|date:"Y-m-d H:i" }}</span>&nbsp;&nbsp;
+                            <a href="/{{ comment.user.username }}/">{{ comment.user.username }}</a>
+                            <a href="javascript:void(0)" class="pull-right reply_btn"
+                               username="{{ comment.user.username }}" comment_id="{{ comment.pk }}"><span>回复</span></a>
+
+                        </div>
+                        {#判断parent_comment_id是否为空#}
+                        {% if comment.parent_comment_id %}
+                            {#增加div样式#}
+                            <div class="parent_comment_info well">
+                                <p>
+                                    {#comment.parent_comment.user表示父评论的用户名#}
+                                    @{{ comment.parent_comment.user }}: {{ comment.parent_comment.content }}
+                                </p>
+                            </div>
+                        {% endif %}
+                        {#评论内容#}
+                        <div>
+                            <p>{{ comment.content }}</p>
+                        </div>
+                    </li>
+                {% endfor %}
+
+            </ul>
+            {% if request.user.username %}
+                <p>发表评论</p>
+                <p>昵称：<input type="text" id="tbCommentAuthor" class="author" disabled="disabled" size="50"
+                             value="{{ request.user.username }}"></p>
+                <div>
+                    <textarea name="" id="comment_content" cols="60" rows="10"></textarea>
+                </div>
+                <input type="button" value="submit" class="btn btn-default comment_btn">
+            {% else %}
+                <div id="comment_form_container">
+                    <div class="login_tips">注册用户登录后才能发表评论，请
+                        <a rel="nofollow" href="/login/" class="underline">登录</a>
+                        或
+                        <a rel="nofollow" href="/zhuce/" class="underline">注册</a>，
+                        <a href="/index/">访问</a>网站首页。
+                    </div>
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+    {% csrf_token %}
+    <script>
+        // 点赞和踩灭
+        $(".action").click(function () {
+            {#hasClass() 方法检查被选元素是否包含指定的 class#}
+            var is_up = $(this).hasClass("diggit");
+            {#获取提示的span标签#}
+            var _this = $(this).children("span");
+            {#判断是否登录#}
+            if ("{{ request.user.username }}") {
+                $.ajax({
+                    url: "/digg/",
+                    type: "post",
+                    data: {
+                        is_up: is_up,
+                        article_id: "{{ article_obj.pk }}",
+                        csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val()
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        console.log(typeof data);
+                        if (data.state) {
+                            //提交成功
+                            var val = _this.text();  //获取text值
+                            //在原有的基础上加1。注意:一定要进行类型转换
+                            _this.text(parseInt(val) + 1)
+                        } else {
+                            // 重复提交
+                            var val = data.handled ? "您已经推荐过！" : "您已经反对过！";
+                            $("#digg_tips").html(val);
+                            setTimeout(function () {
+                                $("#digg_tips").html("")  //清空提示文字
+                            }, 1000)
+                        }
+
+                    }
+                })
+            } else {
+                location.href = "/login/";
+            }
+
+        })
+
+        // 提交评论
+        var pid = "";  //默认为空,表示父评论
+        $(".comment_btn").click(function () {
+            {#评论内容#}
+            var content = $("#comment_content").val();
+            if (pid) {  //判断pid不为空时
+                var index = content.indexOf("\n");
+                //获取评论内容,注意：此时content变量已经被替换掉了
+                content = content.slice(index + 1)
+            }
+            $.ajax({
+                url: "/comment/",
+                type: "post",
+                data: {
+                    content: content,
+                    article_id: "{{ article_obj.pk }}",
+                    pid: pid,
+                    csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val()
+                },
+                success: function (data) {
+                    console.log(data);
+                    {#获取3个值#}
+                    var comment_time = data.timer;
+                    var comment_content = data.content;
+                    var comment_user = data.user;
+                    {#组织li标签#}
+                    var $li = ` <li class="list-group-item">
+                                       <div>
+                                           <span class="small">${comment_time}</span>&nbsp;&nbsp;
+                                           <a href="">${comment_user}</a>
+                                       </div>
+                                       <div>
+                                           <p>${comment_content}</p>
+                                       </div>
+                                    </li>`;
+                    {#追加到评论列表中#}
+                    $(".comment_list").append($li);
+                    // 清空输入框的内容
+                    $("#comment_content").val("")
+                }
+            })
+
+        })
+
+        // 回复按钮事件
+        $(".reply_btn").click(function () {
+            {#获取到textarea输入框光标#}
+            $("#comment_content").focus();
+            {#增加@+用户名+换行符#}
+            var val = "@" + $(this).attr("username") + "\n";
+            {#修改输入框的值#}
+            $("#comment_content").val(val);
+            {#pid赋值#}
+            pid = $(this).attr("comment_id");
+            console.log(pid);
+
+        })
+    </script>
+
+{% endblock %}

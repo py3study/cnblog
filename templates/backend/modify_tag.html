@@ -1,0 +1,74 @@
+{% extends 'backend/base.html' %}
+
+{% block content %}
+
+    <form action="" method="post">
+        {% csrf_token %}
+        {#        <div class="add_article">#}
+        <div class="alert-success text-center">修改标签</div>
+
+        <div class="form-group" style="height: 40px"></div>
+
+        {#        </div>#}
+        <div class="form-group" style="position: relative">
+            <label for="inputtag" class="col-sm-2 control-label">标签名称</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="inputtag" value="{{ tag.title }}">
+            </div>
+            <span style="position: absolute;left: 390px;top: 10px;color: red" id="tag_span"></span>
+        </div>
+        <div class="form-group" style="height: 40px"></div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="button" class="btn btn-success" id="sub">修改</button>
+            </div>
+        </div>
+
+
+    </form>
+    {% csrf_token %}
+    <script>
+        $("#sub").click(function () {
+            var tag_val = $("#inputtag").val();
+            var csrf = $("[name=csrfmiddlewaretoken]").val();
+            if (tag_val.length == 0) {
+                {#console.log(11);#}
+                $("#tag_span").text("标签名不能为空!");
+            } else {
+                {#console.log(22);#}
+                $("#tag_span").text("");
+                $.ajax({
+                    url: "",
+                    type: "post",
+                    data: {
+                        tag: tag_val,
+                        csrfmiddlewaretoken: csrf,
+                    },
+                    success: function (data) {
+                        {#var data = JSON.parse(data);  //反序列化书局#}
+                        if (data.state) { //判断json的状态
+                            swal({
+                                title: '修改成功',
+                                type: 'success',  //展示成功的图片
+                                timer: 500,  //延时500毫秒
+                                showConfirmButton: false  //关闭确认框
+                            }, function () {
+                                window.location.href = "/backend/";  //跳转后台首页
+                            });
+                        } else {
+                            swal("修改失败！", data.msg,
+                                "error");
+                            {#window.location = "/backend/add_tag/";#}
+                        }
+                    }
+
+                });
+
+            }
+
+        })
+    </script>
+
+
+{% endblock %}

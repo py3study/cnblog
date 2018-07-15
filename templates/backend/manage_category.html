@@ -1,0 +1,76 @@
+{% extends 'backend/base.html' %}
+
+
+
+{% block content %}
+    <div class="article_list small">
+
+        <table class="table table-hover table-striped">
+            <thead>
+            <th>分类标题</th>
+            <th>操作</th>
+            <th>操作</th>
+            </thead>
+            <tbody>
+            {% for category in category_list %}
+                <tr>
+                    <td>{{ category.title }}</td>
+                    <td><a href="/backend/modify_category/{{ category.pk }}">编辑</a></td>
+                    <td><a href="javascript:void(0)" class="delete" pk="{{ category.pk }}">删除</a></td>
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+    <script>
+        {#同时选择btn和btn-danger2个class#}
+        $(".delete").click(function () {
+            var pk = $(this).attr("pk");
+            var _this = $(this);
+            var csrf = $("[name=csrfmiddlewaretoken]").val();
+            swal({
+                    title: "亲!确定删除吗？",
+                    text: "您将无法恢复该记录！",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "确定删除！",
+                    cancelButtonText: "取消删除！",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                },
+                function (isConfirm) {
+                    if (isConfirm) { //判断选择确认删除时
+
+                        $.ajax({
+                            url: "/backend/delete_category/",
+                            type: "post",
+                            data: {
+                                id:pk,
+                                csrfmiddlewaretoken: csrf,
+                            },
+                            success: function (data) {
+                                {#var data = JSON.parse(data);  //反序列化书局#}
+                                if (data.state) { //判断json的状态
+                                    swal("删除！", "记录已经被删除!",
+                                        "success");
+                                    _this.parent().parent().remove();  //移除tr标签
+                                } else {
+                                    swal("删除！", "删除失败，请重试!",
+                                        "error");
+                                    {#window.location = data.url;#}
+                                }
+                            }
+
+                        });
+                    } else {
+                        swal("取消！", "记录是安全的:)",
+                            "error");
+                    }
+                });
+        })
+    </script>
+{% endblock %}
+
+
