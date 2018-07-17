@@ -10,15 +10,35 @@ from cnblog import settings  # 导入settings。注意:cnblog为项目名
 import os
 from bs4 import BeautifulSoup
 from blog.form import UserForm
+from utils.code import check_code
+
+def code(request):
+    """
+    生成图片验证码
+    :param request:
+    :return:
+    """
+    img,random_code = check_code()
+    request.session['random_code'] = random_code
+    from io import BytesIO
+    stream = BytesIO()
+    img.save(stream, 'png')
+    return HttpResponse(stream.getvalue())
 
 # Create your views here.
 def login(request):  # 登录
     if request.method == "POST":
         username = request.POST.get("user")
         pwd = request.POST.get("pwd")
+        code = request.POST.get('code')
+        response = {"state": False}
+        if code.upper() != request.session['random_code'].upper():
+            response["msg"] = '验证码错误!'
+            return HttpResponse(json.dumps(response))
+            # return render(request, 'login.html', {'msg': '验证码错误'})
         # 用户验证成功,返回user对象,否则返回None
         user = auth.authenticate(username=username, password=pwd)
-        response = {"state": False}
+
         if user:
             # 查询当前用户对象
             user_obj = UserInfo.objects.filter(username=username).first()
@@ -35,6 +55,7 @@ def login(request):  # 登录
             # return redirect("/index/")
             response["state"] = True
 
+        response["msg"] = '用户名或者密码错误!'
         return HttpResponse(json.dumps(response))
 
     return render(request, "login.html")

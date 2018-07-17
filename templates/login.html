@@ -62,6 +62,7 @@
             left: 10px;
             font-size: 18px;
             color: #3872f6;
+            top: 13px;
         }
 
         .font16 {
@@ -90,6 +91,14 @@
             background: -moz-linear-gradient(#4990c1, #52a3d2, #6186a3); /* Firefox 3.6 - 15 */
             background: linear-gradient(#4990c1, #52a3d2, #6186a3); /* 标准的语法 */
         }
+        .code {
+            width: 200px;
+        }
+        .img {
+            position: relative;
+            left: 203px;
+            top: -46px;
+        }
     </style>
 
 </head>
@@ -110,6 +119,11 @@
                 <i class="icon-lock icon_font"></i>
                 <input type="password" class="login_input" id="pwd" name="pwd" placeholder="请输入密码"/>
             </div>
+            <div class="form-group mg-t20 code">
+                <i class="icon-lock icon_font"></i>
+                <input type="text" class="login_input" id="code" name="code" placeholder="验证码"/>
+                <img class="img" height="45" width="170" onclick="changeImg(this);" src="/code/" alt="" title="点击更换">
+            </div>
             <div class="checkbox mg-b25">
                 <label>
                     <input type="checkbox"/>记住我的登录信息
@@ -124,9 +138,13 @@
 <script src="http://mishengqiang.com/sweetalert/js/sweetalert-dev.js"></script>
 <link rel="stylesheet" href="http://mishengqiang.com/sweetalert/css/sweetalert.css">
 <script>
+    function changeImg(ths) {
+            ths.src = ths.src + '?';
+        }
     $("#sub").click(function () {
         var user = $("#user").val();
         var pwd = $("#pwd").val();
+        var code = $("#code").val();
         var csrf = $("[name=csrfmiddlewaretoken]").val();
         $.ajax({
             url: "",
@@ -134,6 +152,7 @@
             data: {
                 'user': user,
                 'pwd': pwd,
+                'code':code,
                 csrfmiddlewaretoken: csrf,
             },
             success: function (data) {
@@ -149,7 +168,7 @@
                         window.location.href = "/index/";  //跳转后台首页
                     });
                 } else {
-                    sweetAlert("登录失败！", "用户名和密码错误！", "error");
+                    sweetAlert("登录失败！", data.msg, "error");
                 }
             }
 

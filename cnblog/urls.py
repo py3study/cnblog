@@ -23,7 +23,8 @@ urlpatterns = [
     path('', views.index),
     path('index/', views.index),
     path('logout/', views.logout),
-
+    path('code/', views.code),
+    #注册
     path('zhuce/', views.zhuce),
     path('zhuce_ajax/', views.zhuce_ajax),
 
