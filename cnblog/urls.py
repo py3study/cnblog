@@ -53,6 +53,10 @@ urlpatterns = [
     path('backend/delete_tag/', views.delete_tag),
     re_path('backend/modify_tag/(?P<id>\d+)', views.modify_tag),
 
+    #评论管理
+    path('backend/manage_comment/', views.manage_comment),
+    path('backend/delete_comment/', views.delete_comment),
+
     #文章详情
     re_path('(?P<username>\w+)/articles/(?P<article_id>\d+)/$', views.article_detail),
     # 跳转

@@ -574,3 +574,29 @@ def modify_tag(request,id):  # 修改标签
 
     tag = Tag.objects.filter(pk=id).first()
     return render(request, "backend/modify_tag.html", {"tag": tag})
+
+@required_login
+def manage_comment(request):  # 管理评论
+    # 当前用户所有文章的评论
+    comment_list = Comment.objects.filter(article__user_id=request.user.pk)
+    return render(request, "backend/manage_comment.html", {"comment_list": comment_list})
+
+@required_login
+def delete_comment(request):  # 删除评论
+    print(request.POST)
+    response = {"state": False}
+    if request.method == "POST":
+        id = request.POST.get("id")
+        # 删除标签
+        ret = Comment.objects.filter(pk=id).delete()  # 返回元组
+        print(ret)
+
+        if ret[0]:  # 取值为1的情况下
+            response['state'] = True
+        else:  # 取值为0的情况下
+            response['state'] = False
+            response['msg'] = "删除失败!"
+
+    response['msg'] = "非法请求!"
+
+    return JsonResponse(response)
