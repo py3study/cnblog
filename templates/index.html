@@ -51,20 +51,21 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">博客园</a>
+            <a class="navbar-brand" href="/index/">博客园</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="#">首页 <span class="sr-only">(current)</span></a></li>
-{#                <li><a href="#">博问</a></li>#}
+                <li class="active"><a href="/index/">首页 <span class="sr-only">(current)</span></a></li>
+                {#                <li><a href="#">博问</a></li>#}
 
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
                 {% if request.user.username %}
-                    <li><a href="/{{ request.user.username }}"><span class="glyphicon glyphicon-user"></span>&nbsp;{{ request.user.username }}</a>
+                    <li><a href="/{{ request.user.username }}"><span
+                            class="glyphicon glyphicon-user"></span>&nbsp;{{ request.user.username }}</a>
                     </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
@@ -114,16 +115,17 @@
 
             <div class="article_list">
                 {% for article in article_list %}
-{#                    <div class="diggit">#}
-{#                        <span class="diggnum">0</span>#}
-{#                    </div>#}
+                    {#                    <div class="diggit">#}
+                    {#                        <span class="diggnum">0</span>#}
+                    {#                    </div>#}
                     <div class="article_item">
 
-                        <h5><a href="/{{ article.user.username }}/articles/{{ article.pk }}">{{ article.title }}</a></h5>
+                        <h5><a href="/{{ article.user.username }}/articles/{{ article.pk }}">{{ article.title }}</a>
+                        </h5>
                         <div>
                             <span class="media-left"><a href="/{{ article.user.username }}"><img width="48" height="48"
-                                    src="https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=1758343206,1224786249&fm=58&bpow=1024&bpoh=1536"
-                                    alt=""></a></span>
+                                                                                                 src="https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=1758343206,1224786249&fm=58&bpow=1024&bpoh=1536"
+                                                                                                 alt=""></a></span>
 
                             <span class="media-right small desc ">
                               {{ article.desc }}
@@ -135,14 +137,59 @@
                             发布于 <span>{{ article.create_time|date:'Y-m-d H:i' }}</span>&nbsp;&nbsp;
                             <img src="/static/img/icon_comment.gif" alt=""><a
                                 href="/{{ article.user.username }}/articles/{{ article.pk }}">评论({{ article.comment_count }})</a>&nbsp;&nbsp;
-                            <span class="glyphicon glyphicon-thumbs-up"></span><a href="/{{ article.user.username }}/articles/{{ article.pk }}">点赞({{ article.up_count }})</a>
+                            <span class="glyphicon glyphicon-thumbs-up"></span><a
+                                href="/{{ article.user.username }}/articles/{{ article.pk }}">点赞({{ article.up_count }})</a>
                         </div>
                     </div>
                     <hr>
                 {% endfor %}
+
             </div>
+            {#分页展示#}
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li><a href="?page=1" aria-label="Previous"><span aria-hidden="true">首页</span></a></li>
 
+                    {#has_previous 判断是否有上一页#}
+                    {% if article_list.has_previous %}
+                        {#previous_page_number 上一页的页码#}
+                        <li><a href="?page={{ article_list.previous_page_number }}" aria-label="Previous"><span
+                                aria-hidden="true">上一页</span></a></li>
+                    {% else %}
+                        {#class="disabled" 禁止用户点击#}
+                        <li class="disabled"><a href="" aria-label="Previous"><span aria-hidden="true">上一页</span></a>
+                        </li>
+                    {% endif %}
 
+                    {#遍历页码的列表#}
+                    {% for i in pageRange %}
+                        {#判断当前页码数等于底部页码时#}
+                        {% if current_num == i %}
+                            {#增加class,加深按钮#}
+                            <li class="active"><a href="?page={{ i }}">{{ i }}</a></li>
+                        {% else %}
+                            {#href参数为简写,它会自动获取当前路径，并拼接参数#}
+                            <li><a href="?page={{ i }}">{{ i }}</a></li>
+                        {% endif %}
+
+                    {% endfor %}
+
+                    {#has_next 判断是否有下一页#}
+                    {% if article_list.has_next %}
+                        {#next_page_number 下一页的页码#}
+                        <li><a href="?page={{ article_list.next_page_number }}" aria-label="Next"><span
+                                aria-hidden="true">下一页</span></a></li>
+                    {% else %}
+                        {#class="disabled" 禁止用户点击#}
+                        <li class="disabled"><a href="" aria-label="Next"><span aria-hidden="true">下一页</span></a></li>
+                    {% endif %}
+
+                    <li><a href="?page={{ paginator.num_pages }}" aria-label="Next"><span
+                            aria-hidden="true">尾页</span></a>
+                    </li>
+
+                </ul>
+            </nav>
         </div>
         <div class="col-md-3">
 
