@@ -581,7 +581,7 @@ def manage_comment(request):  # 管理评论
     comment_list = Comment.objects.filter(article__user_id=request.user.pk)
     return render(request, "backend/manage_comment.html", {"comment_list": comment_list})
 
-@required_login
+
 def delete_comment(request):  # 删除评论
     print(request.POST)
     response = {"state": False}
