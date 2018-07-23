@@ -33,7 +33,7 @@
 本项目涉及8个表，表关系包含一对一，一对多，多对多！
 表关系图如下：
 
-![Image text](https://github.com/py3study/cnblog/表关系.png)
+![Image text](https://github.com/py3study/cnblog/blob/master/%E8%A1%A8%E5%85%B3%E7%B3%BB.png)
 
 图中箭头开始的英文字母表示关联字段
 
@@ -42,10 +42,10 @@
 ## 效果
 前端：
 
-![Image text](https://github.com/py3study/cnblog/前端.png)
+![Image text](https://github.com/py3study/cnblog/blob/master/%E5%89%8D%E7%AB%AF.png)
 
 后端：
 
-![Image text](https://github.com/py3study/cnblog/后端.png)
+![Image text](https://github.com/py3study/cnblog/blob/master/%E5%90%8E%E7%AB%AF.png)
 
 Copyright (c) 2018-present, xiao You
