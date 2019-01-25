@@ -39,6 +39,15 @@
 
 按照箭头方向查询，表示正向查询，否则为反向查询
 
+
+## 后台账户
+user:xiao
+
+password: xiao1234
+
+或者使用以下命令,创建超时用户(自己定义),也可以登录
+`python manage.py createsuperuser`
+
 ## 效果
 前端：
 
